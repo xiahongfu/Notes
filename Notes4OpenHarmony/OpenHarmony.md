@@ -62,7 +62,7 @@ https://gitee.com/openharmony/graphic_surface_lite
 
 
 https://ost.51cto.com/posts/9879
-![alt text](image.png)
+![alt text](images/image.png)
 
 * OH_NativeImage_Create：
     1. 创建consumer，consumer创建BufferQueueConsumer和BufferQueueProducer，这两个都关联同一个BufferQueue。
