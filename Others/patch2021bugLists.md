@@ -53,12 +53,17 @@ extern "C" napi_value nativeSetInputString(napi_env env, napi_callback_info info
     delete buf;
     return nullptr;
 }
+
 # UnityJSRegister.ets注册不成功
 **解决方法**
 CopyHapResources.cs里，filesToNotOverwrite里需要加上UnityJSScriptRegister.ets。否则对UnityJSRegister.ets的修改会被覆盖。
 
 
 # IMGUI 和 NGUI冲突
+**表现**
+OnGUI里的点击逻辑不生效。游戏内的Debug按钮点击无响应。
+
+**解决方法**
 需要适配ScreenManagerOH.h里的SetLockCursor
 
 在ScreenManagerOH.h里加上
