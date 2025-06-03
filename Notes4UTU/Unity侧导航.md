@@ -27,3 +27,13 @@ Height mesh：勾上就不会停留在斜坡上。否则代理可能会停留在
 
 Bake里设置的参数用来设置整个导航网格的精度。Agents里用来设置不同类型的代理的参数。
 由于一个场景中只能通过Bake操作生成一个导航网格，因此Bake里的精度需要设置为所有Agents里最大的精度（比如Bake的代理半径需要是所有Agents的代理半径的最大值。这样才能保证所有的Agents都能使用Bake出来的导航网格。缺陷是可能会出现由于粒度太大导致的小Agent不合理绕行）。需要保证Bake出来的导航网格体让所有的Agents都能使用。这就是旧版导航系统的缺陷之一。
+
+
+
+
+# 组件
+
+Off Mesh Link
+![alt text](images/image-2.png)
+
+Start和End是起始和结束的点位
