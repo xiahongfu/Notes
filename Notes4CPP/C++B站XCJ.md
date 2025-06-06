@@ -32,6 +32,7 @@ delete[] arr1; arr1 = nullptr;
 
 ## Vector
 ```c++
+find(vec.begin(), vec.end(), 5);  // 返回iterator
 vector.size(); // 元素个数
 vector.capacity();  // 容量
 vector.reserve(8);  // 扩充内存空间。只扩充内存，准备好内存空间。
