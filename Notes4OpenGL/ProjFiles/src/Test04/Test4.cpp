@@ -1,12 +1,9 @@
-#if true
+#if false
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "stb_image.h"
 #include "Shader.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 using namespace std;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -36,20 +33,20 @@ int main()
         return -1;
     }
 
-    // ´´½¨¡¢±àÒë¡¢Á´½Ó×ÅÉ«Æ÷
-    Shader shader("shaderTexture.vs", "shaderTexture.fs");
+    // åˆ›å»ºã€ç¼–è¯‘ã€é“¾æ¥ç€è‰²å™¨
+    Shader shader("./src/Test04/shaderTexture.vs", "./src/Test04/shaderTexture.fs");
     shader.use();
 
     float vertices[] = {
-        //     ---- Î»ÖÃ ----       ---- ÑÕÉ« ----     - ÎÆÀí×ø±ê -
-             0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // ÓÒÉÏ
-             0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // ÓÒÏÂ
-            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // ×óÏÂ
-            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // ×óÉÏ
+        //     ---- ä½ç½® ----       ---- é¢œè‰² ----     - çº¹ç†åæ ‡ -
+             0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // å³ä¸Š
+             0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // å³ä¸‹
+            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // å·¦ä¸‹
+            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // å·¦ä¸Š
     };
     unsigned int indices[] = {
-        0, 1, 3, // µÚÒ»¸öÈı½ÇĞÎ
-        1, 2, 3  // µÚ¶ş¸öÈı½ÇĞÎ
+        0, 1, 3, // ç¬¬ä¸€ä¸ªä¸‰è§’å½¢
+        1, 2, 3  // ç¬¬äºŒä¸ªä¸‰è§’å½¢
     };
     unsigned int VAO, VBO, EBO, texture1, texture2;
     glGenVertexArrays(1, &VAO);
@@ -67,7 +64,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    loadTexture("container.png", GL_RGB);
+    loadTexture("./resource/container.png", GL_RGB);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture2);
@@ -75,7 +72,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    loadTexture("awesomeface.png", GL_RGBA);
+    loadTexture("./resource/awesomeface.png", GL_RGBA);
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
@@ -87,15 +84,9 @@ int main()
     glEnableVertexAttribArray(2);
 
 
-    glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-    glm::mat4 trans(1.0f);
-    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-    glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0); // ÊÖ¶¯ÉèÖÃ
-    unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-    shader.setInt("texture2", 1); // »òÕßÊ¹ÓÃ×ÅÉ«Æ÷ÀàÉèÖÃ
-    shader.setFloat("vis", tmp); // »òÕßÊ¹ÓÃ×ÅÉ«Æ÷ÀàÉèÖÃ
+    glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0); // æ‰‹åŠ¨è®¾ç½®
+    shader.setInt("texture2", 1); // æˆ–è€…ä½¿ç”¨ç€è‰²å™¨ç±»è®¾ç½®
+    shader.setFloat("vis", tmp); // æˆ–è€…ä½¿ç”¨ç€è‰²å™¨ç±»è®¾ç½®
 
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -113,8 +104,8 @@ int main()
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glfwSwapBuffers(window); // ½»»»»º³å
-        glfwPollEvents(); // ¼ì²éÊÂ¼ş
+        glfwSwapBuffers(window); // äº¤æ¢ç¼“å†²
+        glfwPollEvents(); // æ£€æŸ¥äº‹ä»¶
     }
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);

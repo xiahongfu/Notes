@@ -30,14 +30,14 @@ int main()
         return -1;
     }
 
-    // ´´½¨¡¢±àÒë¡¢Á´½Ó×ÅÉ«Æ÷
-    Shader shader("shader.vs", "shader.fs");
+    // åˆ›å»ºã€ç¼–è¯‘ã€é“¾æ¥ç€è‰²å™¨
+    Shader shader("./src/Test03/shader.vs", "./src/Test03/shader.fs");
 
     float vertices[] = {
-        // Î»ÖÃ              // ÑÕÉ«
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // ÓÒÏÂ
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // ×óÏÂ
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // ¶¥²¿
+        // ä½ç½®              // é¢œè‰²
+         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // å³ä¸‹
+        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // å·¦ä¸‹
+         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // é¡¶éƒ¨
     };
     unsigned int VAO, VBO;
     glGenVertexArrays(1, &VAO);
@@ -46,10 +46,10 @@ int main()
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // Î»ÖÃÊôĞÔ
+    // ä½ç½®å±æ€§
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    // ÑÕÉ«ÊôĞÔ
+    // é¢œè‰²å±æ€§
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
@@ -70,8 +70,8 @@ int main()
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glfwSwapBuffers(window); // ½»»»»º³å
-        glfwPollEvents(); // ¼ì²éÊÂ¼ş
+        glfwSwapBuffers(window); // äº¤æ¢ç¼“å†²
+        glfwPollEvents(); // æ£€æŸ¥äº‹ä»¶
     }
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);

@@ -11,7 +11,7 @@ unsigned int fragmentShader();
 unsigned int shaderProgram(unsigned int vshader, unsigned int fshader);
 
 int main()
-{
+{ 
     cout << "start" << endl;
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -32,7 +32,7 @@ int main()
         return -1;
     }
 
-    // ´´½¨¡¢±àÒë¡¢Á´½Ó×ÅÉ«Æ÷
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½
     unsigned int vshader = vertexShader();
     unsigned int fshader = fragmentShader();
     unsigned int program = shaderProgram(vshader, fshader);
@@ -55,14 +55,14 @@ int main()
     //glEnableVertexAttribArray(0);
 
     float vertices[] = {
-    0.5f, 0.5f, 0.0f,   // ÓÒÉÏ½Ç
-    0.5f, -0.5f, 0.0f,  // ÓÒÏÂ½Ç
-    -0.5f, -0.5f, 0.0f, // ×óÏÂ½Ç
-    -0.5f, 0.5f, 0.0f   // ×óÉÏ½Ç
+    0.5f, 0.5f, 0.0f,   // ï¿½ï¿½ï¿½Ï½ï¿½
+    0.5f, -0.5f, 0.0f,  // ï¿½ï¿½ï¿½Â½ï¿½
+    -0.5f, -0.5f, 0.0f, // ï¿½ï¿½ï¿½Â½ï¿½
+    -0.5f, 0.5f, 0.0f   // ï¿½ï¿½ï¿½Ï½ï¿½
     };
     unsigned int indices[] = {
-        0, 1, 3, // µÚÒ»¸öÈı½ÇĞÎ
-        1, 2, 3  // µÚ¶ş¸öÈı½ÇĞÎ
+        0, 1, 3, // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        1, 2, 3  // ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     };
     unsigned int VAO, VBO, EBO;
     glGenVertexArrays(1, &VAO);
@@ -83,7 +83,7 @@ int main()
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
 
-        // ´¦ÀíÖ¡Êı¾İ
+        // ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½
         //glUseProgram(program);
         //glBindVertexArray(VAO);
         //glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -93,10 +93,10 @@ int main()
         //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         //glDrawArrays(GL_TRIANGLES, 0, 6);
-        // ½áÊø´¦ÀíÖ¡Êı¾İ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½
 
-        glfwSwapBuffers(window); // ½»»»»º³å
-        glfwPollEvents(); // ¼ì²éÊÂ¼ş
+        glfwSwapBuffers(window); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        glfwPollEvents(); // ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
     }
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);

@@ -33,7 +33,7 @@ int main()
         return -1;
     }
 
-    // ´´½¨¡¢±àÒë¡¢Á´½Ó×ÅÉ«Æ÷
+    // åˆ›å»ºã€ç¼–è¯‘ã€é“¾æ¥ç€è‰²å™¨
     unsigned int vshader = vertexShader();
     unsigned int fshader = fragmentShader();
     unsigned int fyshader = fragmentYellowShader();
@@ -44,14 +44,14 @@ int main()
     glDeleteShader(fyshader);
 
     float vertices1[] = {
-    0.5f, 0.5f, 0.0f,   // ÓÒÉÏ½Ç
-    0.5f, -0.5f, 0.0f,  // ÓÒÏÂ½Ç
-    0.0f, 0.0f, 0.0f  // ÖĞ¼ä
+    0.5f, 0.5f, 0.0f,   // å³ä¸Šè§’
+    0.5f, -0.5f, 0.0f,  // å³ä¸‹è§’
+    0.0f, 0.0f, 0.0f  // ä¸­é—´
     };
     float vertices2[] = {
-    -0.5f, -0.5f, 0.0f, // ×óÏÂ½Ç
-    -0.5f, 0.5f, 0.0f,   // ×óÉÏ½Ç
-    0.0f, 0.0f, 0.0f  // ÖĞ¼ä
+    -0.5f, -0.5f, 0.0f, // å·¦ä¸‹è§’
+    -0.5f, 0.5f, 0.0f,   // å·¦ä¸Šè§’
+    0.0f, 0.0f, 0.0f  // ä¸­é—´
     };
     unsigned int VAOs[2], VBOs[2];
     glGenVertexArrays(2, VAOs);
@@ -82,8 +82,8 @@ int main()
         glBindVertexArray(VAOs[1]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
-        glfwSwapBuffers(window); // ½»»»»º³å
-        glfwPollEvents(); // ¼ì²éÊÂ¼ş
+        glfwSwapBuffers(window); // äº¤æ¢ç¼“å†²
+        glfwPollEvents(); // æ£€æŸ¥äº‹ä»¶
     }
     glDeleteVertexArrays(2, VAOs);
     glDeleteBuffers(2, VBOs);
