@@ -1,4 +1,4 @@
-#if false
+#if true
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -7,6 +7,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "Texture.h"
 using namespace std;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -35,8 +37,6 @@ int main()
         return -1;
     }
 
-    Shader shader("./src/Test06/shaderTexture.vs", "./src/Test06/shaderTexture.fs");
-    shader.use();
 
     float vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -93,30 +93,15 @@ int main()
         glm::vec3( 1.5f,  0.2f, -1.5f), 
         glm::vec3(-1.3f,  1.0f, -1.5f)  
       };
-    unsigned int VAO, VBO, texture1, texture2;
+    unsigned int VAO, VBO;
+    Shader shader("./src/Test06/shaderTexture.vs", "./src/Test06/shaderTexture.fs");
+    shader.use();
+    Texture texture1("./resource/container.png", GL_TEXTURE0, GL_RGB);
+    Texture texture2("./resource/awesomeface.png", GL_TEXTURE1, GL_RGBA);
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    glGenTextures(1, &texture1);
-    glGenTextures(1, &texture2);
-
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture1);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    loadTexture("./resource/container.png", GL_RGB);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texture2);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    loadTexture("./resource/awesomeface.png", GL_RGBA);
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -127,7 +112,6 @@ int main()
     shader.setInt("texture1", 0);
     shader.setInt("texture2", 1);
     shader.setFloat("vis", tmp);
-
     
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -148,10 +132,6 @@ int main()
 
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(VAO);
         
         for (int i = 0; i < std::size(cubePositions); i++)
@@ -198,22 +178,5 @@ void processInput(GLFWwindow* window, Shader* shader)
         y += 0.1f;
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         y -= 0.1f;
-}
-
-void loadTexture(const char* filepath, GLenum format)
-{
-    int width, height, nrChannels;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* data = stbi_load(filepath, &width, &height, &nrChannels, 0);
-    if (data)
-    {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        cout << "Failed to load texture" << endl;
-    }
-    stbi_image_free(data);
 }
 #endif
