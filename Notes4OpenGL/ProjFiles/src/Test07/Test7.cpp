@@ -1,4 +1,4 @@
-#if false
+#if true
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -10,6 +10,25 @@
 
 #include "Texture.h"
 using namespace std;
+
+
+
+class Camera
+{
+public:
+    Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up);
+    glm::mat4 lookAt(glm::vec3 position, glm::vec3 target, glm::vec3 up);
+private:
+    glm::mat4 view;
+    glm::vec3 position;
+    glm::vec3 targetDirection;
+    glm::vec3 up;
+};
+
+
+
+
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window, Shader* shader);
@@ -35,7 +54,6 @@ int main()
         cout << ">>Failed to initialize GLAD" << endl;
         return -1;
     }
-
 
     float vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -93,7 +111,7 @@ int main()
         glm::vec3(-1.3f,  1.0f, -1.5f)  
       };
     unsigned int VAO, VBO;
-    Shader shader("./src/Test06/shaderTexture.vs", "./src/Test06/shaderTexture.fs");
+    Shader shader("./src/Test07/shaderTexture.vs", "./src/Test07/shaderTexture.fs");
     shader.use();
     Texture texture1("./resource/container.png", GL_TEXTURE0, GL_RGB);
     Texture texture2("./resource/awesomeface.png", GL_TEXTURE1, GL_RGBA);
