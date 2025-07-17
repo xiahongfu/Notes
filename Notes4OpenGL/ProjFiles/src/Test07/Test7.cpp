@@ -2,39 +2,23 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "stb_image.h"
-#include "Shader.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Texture.h"
+#include "camera.h"
+#include "MyTime.h"
+#include "MouseInput.h"
+#include "Shader.h"
 using namespace std;
 
+GLFWwindow* window;
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+MouseInput mouse;
 
-
-class Camera
-{
-public:
-    Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up);
-    glm::mat4 lookAt(glm::vec3 position, glm::vec3 target, glm::vec3 up);
-private:
-    glm::mat4 view;
-    glm::vec3 position;
-    glm::vec3 targetDirection;
-    glm::vec3 up;
-};
-
-
-
-
-
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window, Shader* shader);
-
-static float tmp = 0.3;
-static float x,y,z;
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void processInput(GLFWwindow* window);
 int main()
 {
     cout << "start" << endl;
@@ -42,7 +26,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
     if (window == nullptr) {
         cout << ">>Failed to create GLFW window" << endl;
         glfwTerminate();
@@ -128,15 +112,16 @@ int main()
 
     shader.setInt("texture1", 0);
     shader.setInt("texture2", 1);
-    shader.setFloat("vis", tmp);
     
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glViewport(0, 0, 800, 600);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glEnable(GL_DEPTH_TEST);
-
     while (!glfwWindowShouldClose(window)) {
-        processInput(window, &shader);
-
+        MyTime::UpdateTime();
+        camera.processCameraInput(window);
+        processInput(window);
+        
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -144,7 +129,7 @@ int main()
         
         glm::mat4 view, projection;
         double glfw_get_time = glfwGetTime();
-        view = glm::translate(view, glm::vec3(x, y, -3.0f + z));
+        view = camera.GetViewMatrix(); 
         projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
 
         shader.setMat4("view", view);
@@ -171,29 +156,16 @@ int main()
     glfwTerminate();
     return 0;
 }
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    cout << "height: " << height << " width: " << width << endl;
-    glViewport(0, 0, width, height);
-}
-void processInput(GLFWwindow* window, Shader* shader)
+void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        shader->setFloat("vis", tmp = std::min(tmp + 0.001, 1.0));
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        z += 0.1f;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        z -= 0.1f;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        x -= 0.1f;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        x += 0.1f;
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-        y += 0.1f;
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-        y -= 0.1f;
+}
+bool firstFrame = true;
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    MouseInput::mouse_callback(xpos, ypos);
+    if (!firstFrame) camera.ProcessMouseMovement(mouse.xoffset, mouse.yoffset);
+    firstFrame = false;
 }
 #endif
