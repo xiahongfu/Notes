@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <glm/detail/type_mat.hpp>
+#include <glm/detail/type_vec.hpp>
 
 class Shader {
 public:
@@ -15,5 +16,6 @@ public:
 	void setInt(const std::string& name, int value) const;
 	void setFloat(const std::string& name, float value) const;
 	void setMat4(const GLchar* name, glm::mat4& value) const;
+	void setVec3(const GLchar* name, glm::vec3& value) const;
 	int getUniformLocation(const std::string& name) const;
 };
