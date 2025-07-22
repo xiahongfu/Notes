@@ -1,4 +1,4 @@
-#if false
+#if true
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -15,7 +15,7 @@ using namespace std;
 GLFWwindow* window;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 MouseInput mouse;
-float vertices[] = {
+float vertices[] = { 
     -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
      0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
      0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
@@ -83,8 +83,8 @@ int main()
         return -1;
     }
     
-    Shader shader("./src/illumination/02PhoneLighting/shader.vs", "./src/illumination/02PhoneLighting/shader.fs");
-    Shader lightShader("./src/illumination/02PhoneLighting/light.vs", "./src/illumination/02PhoneLighting/light.fs");
+    Shader shader("./src/illumination/03Material/shader.vs", "./src/illumination/03Material/shader.fs");
+    Shader lightShader("./src/illumination/03Material/light.vs", "./src/illumination/03Material/light.fs");
 
     VAOPlus VAO{vertices, sizeof(vertices), vector<int>{3,3}};
     VAOPlus VAOLight{vertices, sizeof(vertices), vector<int>{3,3}, vector<bool>{true,false}};
@@ -101,9 +101,13 @@ int main()
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glm::vec3 lightPos = glm::vec3(cos(glfwGetTime()), sin(glfwGetTime()), 1.0f);
-        glm::vec3 objectColor = glm::vec3(1.0f, 0.5f, 0.31f);
+        // glm::vec3 lightPos = glm::vec3(cos(glfwGetTime()), sin(glfwGetTime()), 1.0f);
+        glm::vec3 lightPos = glm::vec3(0, 0, 1.0f);
+        glm::vec3 objectColor = glm::vec3(1.0f, 1.0f, 1.0f);
         glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+        lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0f));//abs(
+        lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7f));//abs(
+        lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3f));//abs(
         // 绘制物体
         {
             glm::mat4 model, view, projection;
@@ -116,9 +120,20 @@ int main()
             shader.setMat4("view", view);
             shader.setMat4("projection", projection);
             shader.setVec3("objectColor", objectColor);
-            shader.setVec3("lightColor", lightColor);
-            shader.setVec3("lightPos", lightPos);
             shader.setVec3("viewPos", camera.Position);
+            shader.setVec3("light.color", lightColor);
+            shader.setVec3("light.position", lightPos);
+            shader.setVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+            shader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+            shader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+            // shader.setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+            // shader.setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+            // shader.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+            shader.setVec3("material.ambient", glm::vec3(0.0f, 0.1f, 0.06f));
+            shader.setVec3("material.diffuse", glm::vec3(0.0f, 0.50980392f, 0.50980392f));
+            shader.setVec3("material.specular", glm::vec3(0.50196078f, 0.50196078f, 0.50196078f));
+            shader.setFloat("material.shininess", 32.0f);
+            
             VAO.DrawArrays(36);
         }
 
@@ -134,7 +149,6 @@ int main()
             lightShader.setMat4("model", model);
             lightShader.setMat4("view", view);
             lightShader.setMat4("projection", projection);
-            lightShader.setVec3("objectColor", objectColor);
             lightShader.setVec3("lightColor", lightColor);
             VAOLight.DrawArrays(36);
         }
