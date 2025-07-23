@@ -1,4 +1,4 @@
-#if false
+#if true
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -9,6 +9,7 @@
 #include "MyTime.h"
 #include "MouseInput.h"
 #include "Shader.h"
+#include "Texture.h"
 #include "VAOPlus.h"
 using namespace std;
 
@@ -16,48 +17,49 @@ GLFWwindow* window;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 MouseInput mouse;
 
-float vertices[] = { 
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+float vertices[] = {
+    // positions          // normals           // texture coords
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
 
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -84,11 +86,16 @@ int main()
         return -1;
     }
     
-    Shader shader("./src/illumination/03Material/shader.vs", "./src/illumination/03Material/shader.fs");
-    Shader lightShader("./src/illumination/03Material/light.vs", "./src/illumination/03Material/light.fs");
+    Shader shader("./src/illumination/04LightingMaps/shader.vs", "./src/illumination/04LightingMaps/shader.fs");
+    Shader lightShader("./src/illumination/04LightingMaps/light.vs", "./src/illumination/04LightingMaps/light.fs");
 
-    VAOPlus VAO{vertices, sizeof(vertices), vector<int>{3,3}};
-    VAOPlus VAOLight{vertices, sizeof(vertices), vector<int>{3,3}, vector<bool>{true,false}};
+    Texture diffuse("./resource/container2.png", GL_TEXTURE0);
+    Texture specular("./resource/container2_specular.png", GL_TEXTURE1);
+    Texture emissionMap("./resource/matrix.jpg", GL_TEXTURE2);
+    // Texture specular("./resource/lighting_maps_specular_color.png", GL_TEXTURE1);
+    
+    VAOPlus VAO{vertices, sizeof(vertices), vector<int>{3,3,2}};
+    VAOPlus VAOLight{vertices, sizeof(vertices), vector<int>{3,3,2}, vector<bool>{true,false,false}};
 
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -102,13 +109,13 @@ int main()
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // glm::vec3 lightPos = glm::vec3(cos(glfwGetTime()), sin(glfwGetTime()), 1.0f);
         glm::vec3 lightPos = glm::vec3(0, 0, 1.0f);
+        // glm::vec3 lightPos = glm::vec3(0.0f, sin(glfwGetTime()), cos(glfwGetTime()));
         glm::vec3 objectColor = glm::vec3(1.0f, 1.0f, 1.0f);
         glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-        lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0f));//abs(
-        lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7f));//abs(
-        lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3f));//abs(
+        // lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0f));
+        // lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7f));
+        // lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3f));
         // 绘制物体
         {
             glm::mat4 model, view, projection;
@@ -127,12 +134,10 @@ int main()
             shader.setVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
             shader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
             shader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-            // shader.setVec3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-            // shader.setVec3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-            // shader.setVec3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
             shader.setVec3("material.ambient", glm::vec3(0.0f, 0.1f, 0.06f));
-            shader.setVec3("material.diffuse", glm::vec3(0.0f, 0.50980392f, 0.50980392f));
-            shader.setVec3("material.specular", glm::vec3(0.50196078f, 0.50196078f, 0.50196078f));
+            shader.setInt("material.diffuse", 0);
+            shader.setInt("material.specular", 1);
+            shader.setInt("material.emissionMap", 2);
             shader.setFloat("material.shininess", 32.0f);
             
             VAO.DrawArrays(36);
