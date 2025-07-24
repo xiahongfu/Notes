@@ -45,5 +45,6 @@ void main()
 
     vec3 emission = vec3(texture(material.emissionMap, TexCoord));
     vec3 result = (ambient+diffuse+specular+emission) * objectColor;
-    FragColor = vec4(result, 1.0);
+    // FragColor = vec4(result, 1.0);
+    FragColor = vec4(light.diffuse, 1.0);
 }

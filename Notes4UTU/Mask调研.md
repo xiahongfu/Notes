@@ -2,10 +2,13 @@
 
 ## Mask组件
 ![alt text](images/image-13.png)
+
 **作用**
+
 ​​Mask组件​​主要用于控制子UI元素的可见区域。需要和Graphic组件配合使用（如Image、RawImage、Text）
 
 **实际使用场景**
+
 * UI内容裁剪：比如头像圆形裁剪等
 * UI文本截断：长文本在特定区域内滚动显示。如ScrollView
 * 动态遮罩效果：通过代码控制Mask的遮罩区域
@@ -14,17 +17,23 @@ Mask+Image：可以利用Image的Sprite透明度控制遮罩区域
 Mask+RawImage：通过纹理的Alpha通道定义遮罩区域
 
 **属性**
+
 Show Mask Graphic：True代表显式Mask同级的Image，False表示不显示。
 
 **原理**
+
 Stencil
 
 ## Rect Mask 2D
+
 ![alt text](images/image-14.png)
+
 **作用**
+
 如果裁剪区域是矩形，可以用这个组件代替Mask+Image。
 
 **属性**
+
 Padding：子物体和裁剪区域边缘的填充
 Softness：用于裁剪区域边缘虚化效果
 
@@ -69,8 +78,6 @@ SoftMaskable组件是自动添加到所有SoftMask组件所在物体以及子物
 
 放在SoftMask下面，用于组合出复杂形状。提供了Subtract和Additive两种模式，代表应该加上还是减去这个Mask。
 
-
-
 ## RectTransformFitter
 
 这个组件所在GO的Rect Transform跟随Target组件的Rect Transform
@@ -86,6 +93,7 @@ File > Project Setting > UI > Soft Mask
 
 # SoftMask 插件
 
+![alt text](images/image-19.png)
 使用方法和原生的Mask完全类似，只是多了一些功能。
 
 * Source: 
@@ -112,7 +120,6 @@ stencil buffer与depth buffer一样，都是缓冲区，存在于显存内的某
 
 在OpenGL渲染管线中，在片段着色器fragment shader之后，Blending混融之前有三个测试操作环节: scissor test(unity好像用不了)，Stencil Test和Z-Test。
 
-
 ```txt
 Stencil
 {
@@ -129,6 +136,7 @@ Stencil
 }
 ```
 
-参考：
-[【Unity源码学习】遮罩：Mask与Mask2D](https://zhuanlan.zhihu.com/p/136505882)
-[Unity Shader: 理解Stencil buffer并将它用于一些实战案例](https://blog.csdn.net/liu_if_else/article/details/86316361)
+
+**参考：**
+* [【Unity源码学习】遮罩：Mask与Mask2D](https://zhuanlan.zhihu.com/p/136505882)
+* [Unity Shader: 理解Stencil buffer并将它用于一些实战案例](https://blog.csdn.net/liu_if_else/article/details/86316361)

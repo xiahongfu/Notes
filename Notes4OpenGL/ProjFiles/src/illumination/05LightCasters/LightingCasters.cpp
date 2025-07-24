@@ -1,4 +1,4 @@
-#if false
+#if true
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "camera.h"
+#include "Light.h"
+#include "Material.h"
 #include "MyTime.h"
 #include "MouseInput.h"
 #include "Shader.h"
@@ -16,6 +18,10 @@ using namespace std;
 GLFWwindow* window;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 MouseInput mouse;
+
+
+
+
 
 float vertices[] = {
     // positions          // normals           // texture coords
@@ -61,6 +67,36 @@ float vertices[] = {
     -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
+glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f), 
+    glm::vec3( 2.0f,  5.0f, -15.0f), 
+    glm::vec3(-1.5f, -2.2f, -2.5f),  
+    glm::vec3(-3.8f, -2.0f, -12.3f),  
+    glm::vec3( 2.4f, -0.4f, -3.5f),  
+    glm::vec3(-1.7f,  3.0f, -7.5f),  
+    glm::vec3( 1.3f, -2.0f, -2.5f),  
+    glm::vec3( 1.5f,  2.0f, -2.5f), 
+    glm::vec3( 1.5f,  0.2f, -1.5f), 
+    glm::vec3(-1.3f,  1.0f, -1.5f)  
+  };
+// 定义光源的属性
+glm::vec3 DirectionalLightDirection = glm::vec3(0.0f, -1.0f, -1.0f);
+glm::vec3 DirectionalLightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+glm::vec3 pointLightPositions[] = {
+    glm::vec3( 0.7f,  0.2f,  2.0f),
+    glm::vec3( 2.3f, -3.3f, -4.0f),
+    glm::vec3(-4.0f,  2.0f, -12.0f),
+    glm::vec3( 0.0f,  0.0f, -3.0f)
+};
+glm::vec3 pointLightColors[] = {
+    glm::vec3(0.5f, 0.0f, 0.0f),
+    glm::vec3(0.5f, 0.0f, 0.0f),
+    glm::vec3(0.5f, 0.0f, 0.0f),
+    glm::vec3(0.5f, 0.0f, 0.0f)
+};
+glm::vec3 SpotlightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+glm::vec3 SpotlightPosition = glm::vec3(1.0f, 1.0f, 1.0f);
+
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void processInput(GLFWwindow* window);
@@ -86,12 +122,13 @@ int main()
         return -1;
     }
     
-    Shader shader("./src/illumination/04LightingMaps/shader.vs", "./src/illumination/04LightingMaps/shader.fs");
-    Shader lightShader("./src/illumination/04LightingMaps/light.vs", "./src/illumination/04LightingMaps/light.fs");
+    Shader shader("./src/illumination/05LightCasters/shader.vs", "./src/illumination/05LightCasters/shader.fs");
+    Shader lightShader("./src/illumination/05LightCasters/light.vs", "./src/illumination/05LightCasters/light.fs");
 
     Texture diffuse("./resource/container2.png", GL_TEXTURE0);
     Texture specular("./resource/container2_specular.png", GL_TEXTURE1);
     Texture emissionMap("./resource/matrix.jpg", GL_TEXTURE2);
+    Material material(diffuse, specular, emissionMap);
     // Texture specular("./resource/lighting_maps_specular_color.png", GL_TEXTURE1);
     
     VAOPlus VAO{vertices, sizeof(vertices), vector<int>{3,3,2}};
@@ -101,6 +138,19 @@ int main()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glViewport(0, 0, 800, 600);
     glEnable(GL_DEPTH_TEST);
+
+    // 定向光源和点光源都不变，放在外面
+    shader.use();
+    material.SetValue(shader, "material");
+    DirectionalLight dirLight(DirectionalLightColor*0.1f, glm::vec3(-1.0f, -1.0f, 0), glm::vec3(0.1f, 0.1f, 0.1f),
+    glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f));
+    dirLight.SetValue(shader, "dirLight");
+    for (int i = 0; i < 4; i++)
+    {
+        PointLight pointLight(pointLightColors[i], pointLightColors[i],
+            glm::vec3(0.1f, 0.1f, 0.1f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f), 20.0f);
+        pointLight.SetValue(shader, "pointLight["+to_string(i)+"]");
+    }
     while (!glfwWindowShouldClose(window))
     {
         MyTime::UpdateTime();
@@ -109,54 +159,53 @@ int main()
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glm::vec3 lightPos = glm::vec3(0, 0, 1.0f);
-        // glm::vec3 lightPos = glm::vec3(0.0f, sin(glfwGetTime()), cos(glfwGetTime()));
+        glm::vec3 lightPos = glm::vec3(0, 0, 3.0f);
         glm::vec3 objectColor = glm::vec3(1.0f, 1.0f, 1.0f);
         glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-        // lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0f));
-        // lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7f));
-        // lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3f));
+        Spotlight spotlight(lightColor, lightPos, glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.1f, 0.1f, 0.1f),
+        glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 1.0f, 1.0f), 10.0f, 12.0f);
         // 绘制物体
         {
-            glm::mat4 model, view, projection;
-            model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+            glm::mat4 view, projection;
+            // model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
             view = camera.GetViewMatrix();
             projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
 
-            shader.use();
-            shader.setMat4("model", model);
-            shader.setMat4("view", view);
-            shader.setMat4("projection", projection);
-            shader.setVec3("objectColor", objectColor);
-            shader.setVec3("viewPos", camera.Position);
-            shader.setVec3("light.color", lightColor);
-            shader.setVec3("light.position", lightPos);
-            shader.setVec3("light.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-            shader.setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-            shader.setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-            shader.setVec3("material.ambient", glm::vec3(0.0f, 0.1f, 0.06f));
-            shader.setInt("material.diffuse", 0);
-            shader.setInt("material.specular", 1);
-            shader.setInt("material.emissionMap", 2);
-            shader.setFloat("material.shininess", 32.0f);
+            for(unsigned int i = 0; i < 10; i++)
+            {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::translate(model, cubePositions[i]);
+                float angle = 20.0f * i;
+                model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+                shader.use();
+                shader.setMat4("model", model);
+                shader.setMat4("view", view);
+                shader.setMat4("projection", projection);
+                shader.setVec3("objectColor", objectColor);
+                shader.setVec3("viewPos", camera.Position);
+                spotlight.SetValue(shader, "spotLight");
+                VAO.DrawArrays(36);
+            }
             
-            VAO.DrawArrays(36);
         }
 
         // 绘制灯
         {
-            glm::mat4 model, view, projection;
-            model = glm::translate(model, lightPos);
-            model = glm::scale(model, glm::vec3(0.2f));
-            view = camera.GetViewMatrix();
-            projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+            for (auto pointLightPosition : pointLightPositions)
+            {
+                glm::mat4 model, view, projection;
+                model = glm::translate(model, pointLightPosition);
+                model = glm::scale(model, glm::vec3(0.05f));
+                view = camera.GetViewMatrix();
+                projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
 
-            lightShader.use();
-            lightShader.setMat4("model", model);
-            lightShader.setMat4("view", view);
-            lightShader.setMat4("projection", projection);
-            lightShader.setVec3("lightColor", lightColor);
-            VAOLight.DrawArrays(36);
+                lightShader.use();
+                lightShader.setMat4("model", model);
+                lightShader.setMat4("view", view);
+                lightShader.setMat4("projection", projection);
+                lightShader.setVec3("lightColor", lightColor);
+                VAOLight.DrawArrays(36);
+            }
         }
         
         glfwSwapBuffers(window);

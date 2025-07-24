@@ -10,6 +10,7 @@ Texture::Texture(const char* path, GLenum texture, GLenum format)
 {
     glGenTextures(1, &texId);
     glActiveTexture(texture);
+    this->texIdx = static_cast<int>(texture - GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

@@ -8,6 +8,7 @@ public:
     Texture(const char* path, GLenum texture, GLenum format);
     Texture(const char* path, GLenum texture);
 
+    int texIdx;
 private:
     unsigned int texId;
     void loadTexture(const char* filepath, GLenum format);
