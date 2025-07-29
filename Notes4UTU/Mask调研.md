@@ -5,7 +5,7 @@
 
 **作用**
 
-​​Mask组件​​主要用于控制子UI元素的可见区域。需要和Graphic组件配合使用（如Image、RawImage、Text）
+​​Mask组件​​主要用于控制子UI元素的可见区域，被遮挡的组件必须是Maskable子类，且Maskable属性必须勾选。一般配合RawImage或者Image使用，需要从Image的alpha通道中获取Mask矩阵，所以Image组件设置的图片必须要是带alpha通道的图片。
 
 **实际使用场景**
 
@@ -13,16 +13,9 @@
 * UI文本截断：长文本在特定区域内滚动显示。如ScrollView
 * 动态遮罩效果：通过代码控制Mask的遮罩区域
 
-Mask+Image：可以利用Image的Sprite透明度控制遮罩区域
-Mask+RawImage：通过纹理的Alpha通道定义遮罩区域
-
 **属性**
 
 Show Mask Graphic：True代表显式Mask同级的Image，False表示不显示。
-
-**原理**
-
-Stencil
 
 ## Rect Mask 2D
 
@@ -30,7 +23,7 @@ Stencil
 
 **作用**
 
-如果裁剪区域是矩形，可以用这个组件代替Mask+Image。
+Mask组件的mask区域是从Image组件的图片中获取的。如果mask区域就是一个矩形区域，那再使用Image组件获取mask区域就有点多余了。RectMask2D组件就是当Mask区域是矩形时，用来代替Mask组件+Image组件的，RectMask2D的mask区域就是RectTransform的所在的区域。
 
 **属性**
 
@@ -39,11 +32,16 @@ Softness：用于裁剪区域边缘虚化效果
 
 ## SpriteMask
 
-SpritMask组件
+SpritMask组件用于遮罩场景中的Sprit和粒子。SpritMask组件本身不可见，在3D场景中表现为一个不可见的平面。
+
 ![alt text](images/image-15.png)
+
 粒子的Renderer中可以设置Masking属性
+
 ![alt text](images/image-16.png)
+
 Sprite Renderer可以设置Mask Interaction属性
+
 ![alt text](images/image-17.png)
 
 **作用**
@@ -94,7 +92,25 @@ File > Project Setting > UI > Soft Mask
 # SoftMask 插件
 
 ![alt text](images/image-19.png)
-使用方法和原生的Mask完全类似，只是多了一些功能。
+作用和原生的Mask类似，但是提供了额外的功能
+
+**1. 可以控制Mask矩阵的来源**
+
+通过设置Source可以控制Mask矩阵的来源。来源可以是Graphic（和Mask相同）、Sprite（设置一个Sprite）、Texture（设置一个Texture）
+
+**2. 可以控制Mask矩阵的值**
+
+通过Mask Channel属性，可以控制到底是用alpha通道的值作为Mask矩阵，还是用Red/Green/Blue/Grey/甚至Custom作为Mask矩阵。
+
+**3. 可以指定Mask区域**
+
+可以通过Separate Mask的值指定到底对哪一块区域做mask。如果不指定，则Mask区域由Soft Mask组件所在GO的Rect Transform控制；如果指定则使用指定的Rect Transform控制。
+
+**4. 可以指定事件触发区域**
+
+Raycast Threshold可以用来控制Mask区域对点击事件的敏感程度。Raycast Threshold值的范围在0~1之间。如果Mask矩阵对应位置的值大于设定的Raycast Threshold，那么就接收点击事件，否则不接受点击事件。
+
+**所有属性如下**
 
 * Source: 
   * Graphic: 使用Soft Mask组件所在GO下的Image或Raw Image作为Mask的输入 
@@ -107,9 +123,6 @@ File > Project Setting > UI > Soft Mask
   * Red/Green/Blue: 使用Red/Green/Blue通道作为输入
   * Gray: RGB的平均值作为输入
   * Custom: 自定义四个通道的权重。如Gray=(0.33333,0.33333,0.33333,0);
-
-
-原理：运行时会为SoftMask的所有子GO都生成一个不可见的SoftMaskable，SoftMaskable实现了IMaterialModifier接口，这个接口的作用是在Render之前，让程序有机会修改或替换Material。
 
 # stencil
 
