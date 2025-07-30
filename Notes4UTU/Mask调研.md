@@ -25,6 +25,10 @@ Show Mask Graphic：True代表显式Mask同级的Image，False表示不显示。
 
 Mask组件的mask区域是从Image组件的图片中获取的。如果mask区域就是一个矩形区域，那再使用Image组件获取mask区域就有点多余了。RectMask2D组件就是当Mask区域是矩形时，用来代替Mask组件+Image组件的，RectMask2D的mask区域就是RectTransform的所在的区域。
 
+SpriteMask是一个2D平面放在3D场景中，要想看到效果，必须要将这个SpriteMask放在摄像机和物体（粒子、Sprite）之间。
+
+![alt text](images/image-27.png)
+
 **属性**
 
 Padding：子物体和裁剪区域边缘的填充
@@ -110,6 +114,8 @@ File > Project Setting > UI > Soft Mask
 
 Raycast Threshold可以用来控制Mask区域对点击事件的敏感程度。Raycast Threshold值的范围在0~1之间。如果Mask矩阵对应位置的值大于设定的Raycast Threshold，那么就接收点击事件，否则不接受点击事件。
 
+注意要使用这个功能需要开启Texture/Sprite的 Read/Write。开启路径在Inspector-Advanced-Read/Write。
+
 **所有属性如下**
 
 * Source: 
@@ -124,7 +130,7 @@ Raycast Threshold可以用来控制Mask区域对点击事件的敏感程度。Ra
   * Gray: RGB的平均值作为输入
   * Custom: 自定义四个通道的权重。如Gray=(0.33333,0.33333,0.33333,0);
 
-# stencil
+# stencil 简述
 
 1. Mask会赋予Image一个特殊的材质，这个材质会给Image的每个像素点进行标记，将标记结果存放在一个缓存内（这个缓存叫做 Stencil Buffer）
 2. 当子级UI进行渲染的时候会去检查这个 Stencil Buffer内的标记，如果当前覆盖的区域存在标记（即该区域在Image的覆盖范围内），进行渲染，否则不渲染

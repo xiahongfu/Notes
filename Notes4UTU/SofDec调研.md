@@ -2,15 +2,18 @@
 
 # 制作USM视频
 
-1. 去[官方网站](https://www.criware.cn/web/#/zh/products_services/sofdec)申请使用权
+1. 去[官方网站](https://www.criware.cn/web/#/zh/products_services/sofdec)申请使用权。入口如下所示：
+![alt text](images/image-28.png)
 2. 完成申请后去[我的订单](https://www.criware.cn/web/#/zh/center/order)中下载资源和license
 3. 将下载的license放在`CRIWARE/Tools/LicenseFiles`下
+![alt text](images/image-29.png)
 4. `CRIWARE/Tools/Sofdec2/Sofdec2EncWiz.exe`可以用来制作usm格式视频
+![alt text](images/image-30.png)
 .usm文件是专门用来给游戏的视频播放的格式。USM格式通常采用游戏专用的编解码器，针对游戏场景中的实时播放优化，能在保持较高画质的同时减少CPU/GPU负载。
 
 # 游戏内使用
 
-下载后在`CRIWARE/SDK/documentation/sdk_manual`目录下有详细的使用手册。
+下载后在`CRIWARE/SDK/documentation/sdk_manual`目录下有详细的使用手册。解压后双击index.html即可。
 
 ## Unity
 
